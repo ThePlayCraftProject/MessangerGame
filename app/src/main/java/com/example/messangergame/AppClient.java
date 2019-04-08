@@ -31,6 +31,7 @@ public class AppClient {
 
     public static void sendToAppMessage(String msg) {
         ma.sendToAppMessage(msg+"\n");
+        ma.setBottomScroll();
     }
 
     public static void clearInText() {

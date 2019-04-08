@@ -165,7 +165,8 @@ public class ListActivity extends AppCompatActivity {
         if(!la.servers.contains(server)) {
             la.servers.add(server);
             la.sa.notifyDataSetChanged();
-            la.db.insert(server.getName(), server.getIp(), server.getPort());
+            long id = la.db.insert(server.getName(), server.getIp(), server.getPort());
+            server.setId(id);
         }
     }
 }

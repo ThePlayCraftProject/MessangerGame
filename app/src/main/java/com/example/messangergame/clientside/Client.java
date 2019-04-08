@@ -86,7 +86,6 @@ public class Client {
                             send("Чат разглушён.");
                         }
                     } else {
-                        send(cmd);
                         dos.writeUTF(cmd);
                         if (msgs.size() == 0) {
                             dos.flush();
@@ -103,6 +102,7 @@ public class Client {
 	    if (playing) {
 	        if (client != null) {
                 client.askToStop();
+                client.interrupt();
             }
             playing = false;
 	        if (socket != null) {
