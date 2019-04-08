@@ -50,19 +50,22 @@ public class Client {
 		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		try {
-			send("Введите ip адрес сервера:");
+		    send("Введите ip адрес сервера:");
 			//String ip = get();
 			if (AppClient.ip.toLowerCase().equals("marvel")) AppClient.ip = "178.140.215.233";
 			socket = new Socket(AppClient.ip, AppClient.port);
 		} catch (IOException e) {
 			send(e.toString());
+			if (client != null) {
+				client.askToStop();
+			}
 		}
 		client = new Listener(socket);
 		client.start();
 
 
 		try(DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
-		    if (!socket.isClosed() && AppClient.name != null && playing) {
+		    if (!socket.isClosed() && AppClient.name != null && !AppClient.name.equals("") && playing) {
 		        dos.writeUTF("/changenick "+AppClient.name);
 		        dos.flush();
             }

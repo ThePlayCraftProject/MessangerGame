@@ -7,4 +7,6 @@
     <string name="ip">IP</string>
     <string name="port">Port</string>
     <string name="login">Nickname</string>
+    <string name="add_server">Add server</string>
+    <string name="server_name">Server name</string>
 </resources>
