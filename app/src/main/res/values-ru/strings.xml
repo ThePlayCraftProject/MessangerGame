@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">MessangerGame</string>
+    <string name="command_hint">Напиши здесь</string>
+    <string name="command_button">Отправить</string>
+    <string name="title_activity_settings">Настройки</string>
+    <string name="join_button">Подключиться</string>
+    <string name="ip">IP</string>
+    <string name="port">Порт</string>
+    <string name="login">Имя пользователя</string>
+    <string name="add_server">Добавить сервер</string>
+    <string name="server_name">Имя сервера</string>
+</resources>
