@@ -5,17 +5,14 @@ import android.support.annotation.RequiresApi;
 
 import com.example.messangergame.AppClient;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Client {
 	private static Socket socket;
@@ -64,9 +61,9 @@ public class Client {
 		client.start();
 
 
-		try(DataOutputStream dos = new DataOutputStream(socket.getOutputStream())) {
+		try(PrintStream dos = new PrintStream(socket.getOutputStream())) {
 		    if (!socket.isClosed() && AppClient.name != null && !AppClient.name.equals("") && playing) {
-		        dos.writeUTF("/changenick "+AppClient.name);
+		        dos.println("/changenick "+AppClient.name);
 		        dos.flush();
             }
 
@@ -86,7 +83,7 @@ public class Client {
                             send("Чат разглушён.");
                         }
                     } else {
-                        dos.writeUTF(cmd);
+                        dos.println(cmd);
                         if (msgs.size() == 0) {
                             dos.flush();
                         }
@@ -105,6 +102,8 @@ public class Client {
                 client.interrupt();
             }
             playing = false;
+
+	        msgs.clear();
 	        if (socket != null) {
                 try {
                     socket.close();
@@ -162,10 +161,10 @@ class Listener extends Thread {
 		super.run();
 
 
-		try(DataInputStream dis = new DataInputStream(socket.getInputStream())) {
+		try(Scanner dis = new Scanner(socket.getInputStream())) {
 			while (!socket.isClosed() && !needToStop) {
 				boolean menu = false;
-				String msg = dis.readUTF();
+				String msg = dis.nextLine();
 				if (msg.indexOf("$MENU$") == 0) {
 					msg = msg.replace("$MENU$", "");
                     send("<"+msg);
@@ -173,7 +172,7 @@ class Listener extends Thread {
 					needToShow.add(msg);
 				} else send("<"+msg);
 			}
-		} catch (IOException e) {
+		} catch (IOException | NoSuchElementException e) {
             send(e.toString());
 		}
 	}

@@ -19,8 +19,17 @@ public class Server {
         this.id = id;
     }
 
+    public boolean isHavingChecker() {
+        return checker != null;
+    }
+
 
     public void setChecker(Checker checker) {
+        if (this.checker != null) {
+            this.checker.askToStop();
+            this.checker.interrupt();
+            this.checker = null;
+        }
         this.checker = checker;
     }
 
@@ -48,6 +57,5 @@ public class Server {
 
     public void stop() {
         checker.askToStop();
-        checker.interrupt();
     }
 }

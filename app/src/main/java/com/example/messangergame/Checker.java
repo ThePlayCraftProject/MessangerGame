@@ -3,12 +3,14 @@ package com.example.messangergame;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Checker extends Thread{
     private View view;
@@ -18,12 +20,12 @@ public class Checker extends Thread{
     private TextView details;
     private Server server;
     private volatile Socket socket;
-    private boolean running = false;
+    private volatile Boolean running = false;
 
     public Checker(View view, Server server) {
         this.view = view;
         this.server = server;
-        this.socket = null;
+        socket = null;
 
         layout = (LinearLayout) view.findViewById(R.id.detailLayout);
         status = (ImageView) view.findViewById(R.id.imageView);
@@ -36,6 +38,14 @@ public class Checker extends Thread{
     }
 
     public void setSocket(Socket socket) {
+        if (this.socket != null) {
+            try {
+                this.socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.socket = null;
+        }
         this.socket = socket;
         if (socket != null) {
             check();
@@ -45,7 +55,6 @@ public class Checker extends Thread{
     @Override
     public void run() {
         while (running) {
-            socket = null;
             Connect con = new Connect(server, this);
             con.start();
             try {
@@ -57,14 +66,16 @@ public class Checker extends Thread{
             if (socket == null) {
                 ServerAdapter.setVisibility(layout, View.INVISIBLE);
                 ServerAdapter.setImageResource(status, R.drawable.presence_offline);
+                ListActivity.send("BADrun");
             }
         }
+        ListActivity.send("NOTrun");
     }
 
     private void check() {
         try {
-            DataInputStream dis = new DataInputStream(socket.getInputStream());
-            String msg = dis.readUTF();
+            Scanner dis = new Scanner(socket.getInputStream());
+            String msg = dis.nextLine();
             if (msg != null) {
                 ServerAdapter.setImageResource(status, R.drawable.presence_online);
                 if (msg.length() >= 3) {
@@ -85,7 +96,8 @@ public class Checker extends Thread{
                 } else ServerAdapter.setVisibility(layout, View.INVISIBLE);
             }
             socket.close();
-        } catch (IOException e) {
+        } catch (IOException | NoSuchElementException e) {
+            ListActivity.send("BADcheck");
             ServerAdapter.setImageResource(status, R.drawable.presence_offline);
             ServerAdapter.setVisibility(layout, View.INVISIBLE);
             ListActivity.send("not working");
@@ -94,6 +106,7 @@ public class Checker extends Thread{
 
     public void askToStop() {
         running = false;
+        interrupt();
     }
 }
 
@@ -111,6 +124,6 @@ class Connect extends Thread {
         try {
             socket = new Socket(server.getIp(), server.getPort()+1);
         } catch (IOException e) {}
-        c.setSocket(socket);
+        if (!c.isInterrupted()) c.setSocket(socket);
     }
 }

@@ -12,12 +12,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ServerAdapter extends ArrayAdapter<Server> {
+    private ListView lv;
+    private ListActivity la;
+
     public ServerAdapter(Context context, ArrayList<Server> arr) {
         super(context, R.layout.item_list, arr);
     }
@@ -36,8 +40,10 @@ public class ServerAdapter extends ArrayAdapter<Server> {
 
         LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.detailLayout);
         layout.setVisibility(View.INVISIBLE);
-        Checker ch = new Checker(convertView, server);
-        ch.start();
+        if (!server.isHavingChecker()) {
+            Checker ch = new Checker(convertView, server);
+            ch.start();
+        }
 
         ImageButton btn = (ImageButton) convertView.findViewById(R.id.imageButton);
 
