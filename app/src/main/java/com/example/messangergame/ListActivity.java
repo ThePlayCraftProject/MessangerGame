@@ -169,4 +169,20 @@ public class ListActivity extends AppCompatActivity {
             server.setId(id);
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        for (Server server : servers) {
+            server.stop();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        sa.notifyDataSetChanged();
+    }
 }

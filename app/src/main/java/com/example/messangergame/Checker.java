@@ -1,36 +1,20 @@
 package com.example.messangergame;
 
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Checker extends Thread{
-    private View view;
-    private LinearLayout layout;
-    private ImageView status;
-    private ProgressBar bar;
-    private TextView details;
+    private ServerAdapter sa;
     private Server server;
     private volatile Socket socket;
     private volatile Boolean running = false;
 
-    public Checker(View view, Server server) {
-        this.view = view;
+    public Checker(ServerAdapter sa, Server server) {
+        this.sa = sa;
         this.server = server;
         socket = null;
-
-        layout = (LinearLayout) view.findViewById(R.id.detailLayout);
-        status = (ImageView) view.findViewById(R.id.imageView);
-        bar = (ProgressBar) view.findViewById(R.id.progressBar);
-        details = (TextView) view.findViewById(R.id.details);
 
         server.setChecker(this);
 
@@ -64,12 +48,12 @@ public class Checker extends Thread{
             }
             con.interrupt();
             if (socket == null) {
-                ServerAdapter.setVisibility(layout, View.INVISIBLE);
-                ServerAdapter.setImageResource(status, R.drawable.presence_offline);
-                ListActivity.send("BADrun");
+                if (server.online != Server.ONLINE) {
+                    server.online = Server.OFFLINE;
+                    sa.notifyDataSetChanged();
+                }
             }
         }
-        ListActivity.send("NOTrun");
     }
 
     private void check() {
@@ -77,7 +61,7 @@ public class Checker extends Thread{
             Scanner dis = new Scanner(socket.getInputStream());
             String msg = dis.nextLine();
             if (msg != null) {
-                ServerAdapter.setImageResource(status, R.drawable.presence_online);
+                server.online = Server.ONLINE;
                 if (msg.length() >= 3) {
                     String[] args = msg.split("/");
                     int players = 0;
@@ -88,20 +72,16 @@ public class Checker extends Thread{
                     if (args[1].length() > 0) {
                         max = Integer.parseInt(args[1]);
                     }
-                    bar.setMax(max);
-                    bar.setProgress(players);
-                    ServerAdapter.setText(details, players + "/" + max);
-
-                    ServerAdapter.setVisibility(layout, View.VISIBLE);
-                } else ServerAdapter.setVisibility(layout, View.INVISIBLE);
+                    server.max = max;
+                    server.players = players;
+                }
             }
             socket.close();
         } catch (IOException | NoSuchElementException e) {
-            ListActivity.send("BADcheck");
-            ServerAdapter.setImageResource(status, R.drawable.presence_offline);
-            ServerAdapter.setVisibility(layout, View.INVISIBLE);
+            server.online = Server.OFFLINE;
             ListActivity.send("not working");
         }
+        sa.notifyDataSetChanged();
     }
 
     public void askToStop() {

@@ -13,7 +13,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,16 @@ public class ServerAdapter extends ArrayAdapter<Server> {
 
     public ServerAdapter(Context context, ArrayList<Server> arr) {
         super(context, R.layout.item_list, arr);
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        new Handler(Looper.getMainLooper()).post(new Runnable(){
+            @Override
+            public void run() {
+                ServerAdapter.super.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -39,9 +52,29 @@ public class ServerAdapter extends ArrayAdapter<Server> {
         ((TextView) convertView.findViewById(R.id.port)).setText(String.valueOf(server.getPort()));
 
         LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.detailLayout);
-        layout.setVisibility(View.INVISIBLE);
+
+
+        ImageView status = (ImageView) convertView.findViewById(R.id.imageView);
+        ProgressBar bar = (ProgressBar) convertView.findViewById(R.id.progressBar);
+        TextView details = (TextView) convertView.findViewById(R.id.details);
+        if (server.online != Server.ONLINE) {
+            layout.setVisibility(View.INVISIBLE);
+            if (server.online == Server.OFFLINE) {
+                status.setImageResource(R.drawable.presence_offline);
+            }
+            else {
+                status.setImageResource(R.drawable.presence_invisible);
+            }
+        }
+        else {
+            layout.setVisibility(View.VISIBLE);
+            status.setImageResource(R.drawable.presence_online);
+            details.setText(server.players+"/"+server.max);
+            bar.setMax(server.max);
+            bar.setProgress(server.players);
+        }
         if (!server.isHavingChecker()) {
-            Checker ch = new Checker(convertView, server);
+            Checker ch = new Checker(this, server);
             ch.start();
         }
 
@@ -76,32 +109,5 @@ public class ServerAdapter extends ArrayAdapter<Server> {
 
 
         return convertView;
-    }
-
-    public static void setText(final TextView tv, final String text) {
-        new Handler(Looper.getMainLooper()).post(new Runnable(){
-            @Override
-            public void run() {
-                tv.setText(text);
-            }
-        });
-    }
-
-    public static void setVisibility(final LinearLayout ll, final int v) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                ll.setVisibility(v);
-            }
-        });
-    }
-
-    public static void setImageResource(final ImageView iv, final int r) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @Override
-            public void run() {
-                iv.setImageResource(r);
-            }
-        });
     }
 }
