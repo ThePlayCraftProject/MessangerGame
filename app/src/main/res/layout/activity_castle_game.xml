@@ -22,11 +22,11 @@
             tools:layout_editor_absoluteY="206dp" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:background="#FFFFFF"
+            android:background="#01FFFFFF"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/surfaceView"
@@ -35,11 +35,11 @@
             tools:layout_editor_absoluteX="-16dp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:background="#0356E6"
+            android:background="#01FFFFFF"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/surfaceView"
@@ -48,11 +48,11 @@
             tools:layout_editor_absoluteX="16dp" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
-            android:background="#E80202"
+            android:background="#01FFFFFF"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/surfaceView"

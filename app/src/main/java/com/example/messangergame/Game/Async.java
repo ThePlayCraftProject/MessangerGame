@@ -8,13 +8,13 @@ public class Async extends AsyncTask<Castle,Void,Void> {
     @Override
     protected Void doInBackground(Castle... castles) {
         if (castles.length >= 2) {
-            for (int i = 0; i < 144; i++) {
+            for (double i = 0; i < 144; i+=0.1) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(30);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                castles[0].damage(castles[1], 1);
+                castles[0].damage(castles[1], 0.1);
             }
         }
         return null;

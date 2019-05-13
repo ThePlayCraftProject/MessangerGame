@@ -32,7 +32,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
         TextView price = convertView.findViewById(R.id.price);
 
         name.setText(card.getName());
-        price.setText(card.getPrice()+"");
+        price.setText(card.getPrice() +"");
 
         return convertView;
     }

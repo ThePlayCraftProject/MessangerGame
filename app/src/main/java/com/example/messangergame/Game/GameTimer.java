@@ -25,7 +25,7 @@ public class GameTimer extends Thread {
 
     /** Действия, выполняемые в потоке */
     public void run() {
-        Log.e("MSG","GameTimer>Start");
+        Log.e("MSGI","GameTimer>Start");
         while (running) {
             Canvas c = null;
             try {

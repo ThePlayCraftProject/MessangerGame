@@ -3,13 +3,22 @@ package com.example.messangergame.Game;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.example.messangergame.CastleGame;
 import com.example.messangergame.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Castle extends Static {
     public static final int TEAM_BLUE = 0;
+    private ArrayList<Sprite> soldiers1 = new ArrayList<>();
+    private ArrayList<Sprite> soldiers2 = new ArrayList<>();
+    private ArrayList<Sprite> soldiers3 = new ArrayList<>();
+    private ArrayList<ArrayList<Sprite>> soldiers = new ArrayList<>(Arrays.asList(soldiers1, soldiers2, soldiers3));
+    private String color;
     private static final int[] TEAM_BLUE_STATES = {R.drawable.a0, R.drawable.a1, R.drawable.a2};
     private static final int[] TEAM_GREEN_STATES = {R.drawable.a3, R.drawable.a4, R.drawable.a5};
     private static final int[] TEAM_RED_STATES = {R.drawable.a6, R.drawable.a7, R.drawable.a8};
@@ -17,16 +26,27 @@ public class Castle extends Static {
     public static final int TEAM_GREEN = 1;
     public static final int TEAM_RED = 2;
     private int team;
+    int w,h;
     private int state = 0;
-    private int HP = 120;
+    private double HP = 120;
     private static int players = 1;
     private int player;
 
-    public int getHP() {
+    public String getColor() {
+        return color;
+    }
+
+    public void summonSoldier(Sprite s, int layer) {
+        if (s == null) return;
+        soldiers.get(layer).add(s);
+        s.spawn((int)(w / (players == 1 ? 1.35 : 3.85)),h - 10);
+    }
+
+    public double getHP() {
         return HP;
     }
 
-    private void gotDamage(Castle who, int hit) {
+    private void gotDamage(Castle who, double hit) {
         if (HP <= 0) return;
         HP -= hit;
         int newstate = state;
@@ -53,7 +73,7 @@ public class Castle extends Static {
         }
     }
 
-    public void damage(Castle target, int hit) {
+    public void damage(Castle target, double hit) {
         HP += hit;
         target.gotDamage(this, hit);
     }
@@ -61,10 +81,24 @@ public class Castle extends Static {
     public Castle(int w, int h, Context context, int team) {
         super(context, getStartID(team), (int)(w / (players == 1 ? 3.85 : 1.35)), (int)(h/6));
         scale(w/2, h);
+        this.w = w;
+        this.h = h;
         this.team = team;
         if (players == 1) super.flipX();
         player = players;
         players+=1;
+
+        switch (team) {
+            case TEAM_BLUE:
+                color = "0000FF";
+                break;
+            case TEAM_GREEN:
+                color = "00FF00";
+                break;
+            case TEAM_RED:
+                color = "FF0000";
+                break;
+        }
     }
 
     private static int getStartID(int team) {
@@ -82,6 +116,11 @@ public class Castle extends Static {
     @Override
     public void onDraw(Canvas canvas) {
         canvas.drawBitmap(bitmap, offX, offY, null);
+        for (ArrayList<Sprite> level : soldiers) {
+            for (Sprite soldier : level) {
+                soldier.onDraw(canvas);
+            }
+        }
 
     }
 
