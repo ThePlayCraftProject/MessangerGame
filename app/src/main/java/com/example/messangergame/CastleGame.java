@@ -257,7 +257,7 @@ public class CastleGame extends AppCompatActivity implements View.OnDragListener
             switch(id) {
                 case 0:
                     Sprite s = new Sprite(this, msf.getSize().x, "walk_0", 3, player, 100);
-                    msf.castles[player].summonSoldier(s);
+                    msf.castles[player].summonSoldier(s, player);
                     break;
             }
         } catch (Exception e) {
